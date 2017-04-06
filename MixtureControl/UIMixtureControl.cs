@@ -9,7 +9,7 @@ public class UIMixtureControl : MonoBehaviour
 
 	public delegate void CBProgressBarEnd(UIMixtureControl obj);
 	public CBProgressBarEnd cbPBEnd;
-    public CBProgressBarEnd cbPBRoundEnd;
+        public CBProgressBarEnd cbPBRoundEnd;
 
 	//lua event
 	public UILuaNode mNodeEvent;
