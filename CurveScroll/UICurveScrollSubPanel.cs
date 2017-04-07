@@ -1,29 +1,28 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class UICurveScrollSubPanel : UIListItem 
 {
-	public float fPos;
-	public UILuaNode nodeBtn;
-	public int nPanelStartDepth = 1;
-	UIPanel pl = null;
+     public float fPos;
+     public UILuaNode nodeBtn;
+     public int nPanelStartDepth = 1;
+     UIPanel pl = null;
 
-	void Awake( )
+     void Awake( )
+     {
+     	pl = GetComponent<UIPanel>();
+     }
+
+     virtual public void SetShowParams( int nRenderOrder, float fVisibility )
+     {
+     	if ( pl )
 	{
-		pl = GetComponent<UIPanel>();
+	   pl.depth = nPanelStartDepth + nRenderOrder;
 	}
 
-	virtual public void SetShowParams( int nRenderOrder, float fVisibility )
+	if( nodeBtn )
 	{
-		if (pl)
-		{
-			pl.depth = nPanelStartDepth + nRenderOrder;
-		}
-
-		if(nodeBtn)
-		{
-			nodeBtn.mScrObj.CallMember( "SetShowParams", new object[]{fVisibility} );
-		}
+	   nodeBtn.mScrObj.CallMember( "SetShowParams", new object[]{fVisibility} );
 	}
+     }
 }
