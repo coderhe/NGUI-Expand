@@ -160,9 +160,8 @@ public class UITextImage : UIWidget
         fCurLineLength += label.width;
         if (fCurLineLength > (float)mWidth)
         {
-            fCurHeight += fLineHeight;
-            label.transform.localPosition = new Vector3( 0 - (mWidth / 2), _CalcPostionY(), 0 );
-            WrapLine();
+            WrapLine( );
+            label.transform.localPosition = new Vector3( 0 - (mWidth / 2), _CalcPostionY( ), 0 );
         }
         else
         {
@@ -189,9 +188,9 @@ public class UITextImage : UIWidget
         fCurLineLength += sprite.width;
         if ( fCurLineLength > (float)mWidth )
         {
-            fCurHeight += sprite.height;
-            sprite.transform.localPosition = new Vector3( 0 - (mWidth / 2), _CalcPostionY(), 0 );
             WrapLine( );
+            fCurHeight = sprite.height >= fLineHeight ? fCurHeight + sprite.height - fLineHeight : fCurHeight;
+            sprite.transform.localPosition = new Vector3( 0 - (mWidth / 2), _CalcPostionY(), 0 );
         }
         else
         {
