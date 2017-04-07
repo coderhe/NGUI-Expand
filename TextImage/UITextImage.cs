@@ -21,6 +21,7 @@ public class UITextImage : UIWidget
 
     List<UILabel>   mTextCache;
     List<UISprite>  mSpriteCache;
+    List<UILabel>   mPartTextCache;
 
     /// <summary>
     /// private const
@@ -34,6 +35,7 @@ public class UITextImage : UIWidget
         mPivot = UIWidget.Pivot.Center;
         mTextCache = new List<UILabel>();
         mSpriteCache = new List<UISprite>();
+        mPartTextCache = new List<UILabel>();
 
         if (!mAtlas)
             mAtlas = AtlasCache.Instance.GetAtlas("setting");
@@ -80,17 +82,11 @@ public class UITextImage : UIWidget
             return;
 
         int i = 0;
-        string sText = string.Empty;
         while ( i < mContent.Length )
         {
             if (mContent[i] == '/')
             {
-                if (!string.IsNullOrEmpty(sText))
-                {
-                    ProcessText(sText);
-                    sText = "";
-                }
-                if (mContent.Length > (i + 1) && mContent[i + 1] == 'n')
+                if (mContent.Length > (i+1) && mContent[i+1] == 'n')
                 {
                     WrapLine( );
                     i = i + 2;
@@ -103,11 +99,6 @@ public class UITextImage : UIWidget
             }
             else if (mContent[i] == '{')
             {
-                if (!string.IsNullOrEmpty(sText))
-                {
-                    ProcessText(sText);
-                    sText = "";
-                }
                 int nLast = mContent.IndexOf("}", i);
                 if (nLast > -1)
                 {
@@ -118,6 +109,7 @@ public class UITextImage : UIWidget
                     }
                     else
                     {
+                        PartSort( );
                         ProcessImage(sSprite);
                     }
                     i = nLast + 1;
@@ -130,61 +122,78 @@ public class UITextImage : UIWidget
             }
             else
             {
-                sText += mContent[i];
+                ProcessText(mContent[i].ToString());
                 i++;
             }
         }
 
-        if (!string.IsNullOrEmpty(sText))
-        {
-            ProcessText(sText);
-            sText = string.Empty;
-            WrapLine( );
-        }
+        WrapLine( );
     }
 
-    public void ProcessText( string sText )
+    public UILabel GenUILabel( string sText )
     {
         nCallTimes++;
-        GameObject goLabel = NGUITools.AddChild(gameObject);
+        GameObject goLabel = NGUITools.AddChild( gameObject );
+        if ( goLabel == null )
+            return null;
+
         goLabel.name = "label" + nCallTimes;
-        UILabel label = goLabel.AddComponent<UILabel>();
+        UILabel label = goLabel.AddComponent<UILabel>( );
         label.trueTypeFont = mFont;
-        label.fontSize = Mathf.RoundToInt(fLineHeight);
+        label.fontSize = Mathf.RoundToInt( fLineHeight );
         label.overflowMethod = UILabel.Overflow.ResizeFreely;
         label.depth = nCallTimes;
         label.maxLineCount = 1;
         label.pivot = UIWidget.Pivot.BottomLeft;
         label.text = sText;
 
+        return label;
+    }
+
+    public void ProcessText( string sText )
+    {
+        UILabel label = GenUILabel(sText);
+        if ( label == null )
+            return;
+                
         fCurLineLength += label.width;
-        if (fCurLineLength > (float)mWidth)
+        if ( fCurLineLength > (float)mWidth )
         {
             WrapLine( );
-            label.transform.localPosition = new Vector3( 0 - (mWidth / 2), _CalcPostionY( ), 0 );
+            if ( label )
+            {
+                mPartTextCache.Add( label );
+                label.transform.localPosition = new Vector3( 0 - (mWidth / 2), _CalcPostionY( ), 0 );
+            }
         }
         else
         {
-            mTextCache.Add(label);
-            label.transform.localPosition = new Vector3( fCurLineLength - (float)label.width - (mWidth / 2), _CalcPostionY(), 0 ) ;
+            mPartTextCache.Add( label );
+            label.transform.localPosition = new Vector3( fCurLineLength - (float)label.width - (mWidth / 2), _CalcPostionY(), 0 );
         }
     }
 
     public void ProcessImage( string sImage )
     {
         GameObject goImage = new GameObject();
-        if (!goImage)
+        if ( goImage == null )
             return;
 
         nCallTimes++;
         GameObject obj = NGUITools.AddChild(gameObject, goImage);
         obj.name = "sprite" + nCallTimes;
-        UISprite sprite = obj.AddComponent<UISprite>();
+        UISprite sprite = obj.AddComponent<UISprite>( );
         sprite.pivot = UIWidget.Pivot.BottomLeft;
         sprite.atlas = mAtlas;
         sprite.spriteName = sImage;
         sprite.depth = nCallTimes;
-        
+        UISpriteData sp = mAtlas.GetSprite( sImage );
+        if ( sp != null )
+        {
+            sprite.width = sp.width;
+            sprite.height = sp.height;
+        }
+                                
         fCurLineLength += sprite.width;
         if ( fCurLineLength > (float)mWidth )
         {
@@ -199,11 +208,34 @@ public class UITextImage : UIWidget
         }
     }
 
+    public void PartSort( )
+    {
+        if (mPartTextCache.Count > 0)
+        {
+            string sPartText = string.Empty;
+            float fPosX = mPartTextCache[0].transform.localPosition.x;
+            for (int i = 0; i < mPartTextCache.Count; ++i)
+            {
+                sPartText += mPartTextCache[i].text;
+                GameObject.Destroy( mPartTextCache[i].gameObject );
+            }
+            UILabel label = GenUILabel( sPartText );
+            if ( label )
+            {
+                mTextCache.Add( label );
+                label.transform.localPosition = new Vector3( fPosX, _CalcPostionY( ), 0 );
+            }
+
+            mPartTextCache.Clear( );
+        }
+    }
+
     public void WrapLine( )
     {
+        PartSort( );
         if ( mSpriteCache.Count > 0 )
         {
-            mSpriteCache.Sort((a, b) => (a.height.CompareTo(b.height)));
+            mSpriteCache.Sort( (a, b) => (b.height.CompareTo(a.height)) );
             if ( mSpriteCache[0].height > Mathf.RoundToInt(fLineHeight) )
             {
                 fCurHeight = fCurHeight - fLineHeight + mSpriteCache[0].height;
@@ -218,7 +250,7 @@ public class UITextImage : UIWidget
                 }
             }
         }
-
+        
         if ( mTextCache != null )
             mTextCache.Clear( );
         if ( mSpriteCache != null )
