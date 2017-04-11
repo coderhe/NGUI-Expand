@@ -331,13 +331,13 @@ public abstract class UIBasicSprite : UIWidget
 			AdvancedFill(verts, uvs, cols);
 			break;
 
-      case Type.Quarter:
-      QuarterFill(verts, uvs, cols);
-      break;
+			case Type.Quarter:
+			QuarterFill(verts, uvs, cols);
+			break;
 
-      case Type.Half:
-      HalfFill(verts, uvs, cols);
-      break;
+			case Type.Half:
+			HalfFill(verts, uvs, cols);
+			break;
 		}
 	}
 
