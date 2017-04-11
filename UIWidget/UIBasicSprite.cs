@@ -14,8 +14,8 @@ public abstract class UIBasicSprite : UIWidget
 		Tiled,
 		Filled,
 		Advanced,
-    Quarter,
-    Half,
+    		Quarter,
+    		Half,
 	}
 
 	public enum FillDirection
@@ -1001,57 +1001,57 @@ public abstract class UIBasicSprite : UIWidget
 		}
 	}
   
-  //@Add 四分之一填充 by stream
-  void QuarterFill(BetterList<Vector3> verts, BetterList<Vector2> uvs, BetterList<Color> cols)
-  {
-      Vector4 v = drawingDimensions;
-      Vector4 u = drawingUVs;
-      Color c = drawingColor;
+  	//@Add 四分之一填充 by stream
+	void QuarterFill(BetterList<Vector3> verts, BetterList<Vector2> uvs, BetterList<Color> cols)
+	{
+		Vector4 v = drawingDimensions;
+		Vector4 u = drawingUVs;
+      		Color c = drawingColor;
 
-      float fHeight = v.w - v.y;
-      float fWidth = v.z - v.x;
+		float fHeight = v.w - v.y;
+		float fWidth = v.z - v.x;
 
-      //左上角
-      Fill(verts, uvs, cols,
-          v.x, v.z - fWidth / 2, v.y + fHeight / 2, v.w,
-          u.x, u.z, u.y, u.w, c);
+		//左上角
+		Fill(verts, uvs, cols,
+			v.x, v.z - fWidth / 2, v.y + fHeight / 2, v.w,
+			u.x, u.z, u.y, u.w, c);
 
-      //左下角
-      Fill(verts, uvs, cols,
-          v.x, v.z - fWidth / 2, v.y, v.w - fHeight / 2,
-          u.x, u.z, u.w, u.y, c);
+		//左下角
+		Fill(verts, uvs, cols,
+			v.x, v.z - fWidth / 2, v.y, v.w - fHeight / 2,
+			u.x, u.z, u.w, u.y, c);
 
-      //右下角
-      Fill(verts, uvs, cols,
-          v.x + fWidth / 2, v.z, v.y, v.w - fHeight / 2,
-          u.z, u.x, u.w, u.y, c);
+ 		//右下角
+		Fill(verts, uvs, cols,
+  			v.x + fWidth / 2, v.z, v.y, v.w - fHeight / 2,
+			u.z, u.x, u.w, u.y, c);
 
-      //右上角
-      Fill(verts, uvs, cols,
-          v.x + fWidth / 2, v.z, v.y + fHeight / 2, v.w,
-          u.z, u.x, u.y, u.w, c);
-  }
+ 		//右上角
+		Fill(verts, uvs, cols,
+			v.x + fWidth / 2, v.z, v.y + fHeight / 2, v.w,
+  			u.z, u.x, u.y, u.w, c);
+	}
   
-  //@Add 二分之一填充  by stream
-  void HalfFill(BetterList<Vector3> verts, BetterList<Vector2> uvs, BetterList<Color> cols)
-  {
-      Vector4 v = drawingDimensions;
-      Vector4 u = drawingUVs;
-      Color c = drawingColor;
+	//@Add 二分之一填充  by stream
+	void HalfFill(BetterList<Vector3> verts, BetterList<Vector2> uvs, BetterList<Color> cols)
+	{
+		Vector4 v = drawingDimensions;
+      		Vector4 u = drawingUVs;
+		Color c = drawingColor;
 
-      float fHeight = v.w - v.y;
-      float fWidth = v.z - v.x;
+		float fHeight = v.w - v.y;
+		float fWidth = v.z - v.x;
 
-      //左边
-      Fill(verts, uvs, cols,
-          v.x, v.z - fWidth / 2, v.y, v.w,
-          u.x, u.z, u.y, u.w, c);
+		//左边
+		Fill(verts, uvs, cols,
+			v.x, v.z - fWidth / 2, v.y, v.w,
+			u.x, u.z, u.y, u.w, c);
 
-      //右边
-      Fill(verts, uvs, cols,
-          v.x + fWidth / 2, v.z, v.y, v.w,
-          u.z, u.x, u.y, u.w, c);
-  }
+		//右边
+		Fill(verts, uvs, cols,
+			v.x + fWidth / 2, v.z, v.y, v.w,
+			u.z, u.x, u.y, u.w, c);
+	}
 
 	/// <summary>
 	/// Adjust the specified quad, making it be radially filled instead.
