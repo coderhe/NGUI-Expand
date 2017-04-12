@@ -1,6 +1,5 @@
 # NGUI-Expand
-## Create some controls about NGUI
-扩展NGUI的控件库
+Create some controls about NGUI / 扩展NGUI的控件库;
 
 ## TextImage 
 图文混排
