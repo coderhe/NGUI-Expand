@@ -85,7 +85,6 @@ public class UIMixtureControl : MonoBehaviour
 			return;
 		}
 
-
 		float fVal = Mathf.Lerp(fCurValue, fDes, fInterval / fTotalTime);
 		int nRound = Mathf.FloorToInt(fVal);
 
@@ -140,7 +139,7 @@ public class UIMixtureControl : MonoBehaviour
 			return;
 		
 		if( cbPBRoundEnd != null )
-            cbPBRoundEnd(this);
+            		cbPBRoundEnd(this);
 		
 		gameObject.SendMessage( "OnProgressBarRoundEnd", this, SendMessageOptions.DontRequireReceiver );
 		if ( mNodeEvent && !string.IsNullOrEmpty(sPBRoundEndEvent) )
